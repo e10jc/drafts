@@ -1,21 +1,32 @@
 const {ApolloServer, gql} = require('apollo-server-express')
 
+const Draft = require('./models/draft')
+
 const typeDefs = gql`
+  type Draft {
+    id: Int!
+    prompt: Prompt
+    user: User
+  }
+
+  type Prompt {
+    id: Int!
+    title: String
+  }
+
   type User {
+    id: Int!
     email: String
   }
 
   type Query {
-    users: [User]
+    drafts: [Draft]
   }
 `
 
 const resolvers = {
   Query: {
-    users: () => [{
-      id: 1,
-      email: 'fuck@fuck.com',
-    }]
+    drafts: async (obj, args, context, info) => Draft.query().eager('[prompt, user]')
   }
 }
 

@@ -11,7 +11,9 @@
    "license": "UNLICENSED",
    "dependencies": {
       "@zeit/next-typescript": "^1.1.0",
+      "knex": "^0.15.2",
       "mysql": "^2.14.1",
+      "mysql2": "^1.5.3",
       "next": "^6.1.1",
       "react": "^16.4.1",
       "react-dom": "^16.4.1",
@@ -23,6 +25,7 @@
       "@types/next": "^6.0.4",
       "@types/node": "^8.10.21",
       "@types/react": "^16.4.6",
-      "babel-plugin-styled-components": "^1.5.1"
+      "babel-plugin-styled-components": "^1.5.1",
+      "dotenv": "^6.0.0"
    }
 }

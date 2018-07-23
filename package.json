@@ -2,7 +2,6 @@
    "name": "drafts",
    "version": "1.0.0",
    "description": "",
-   "main": "src/index.ts",
    "scripts": {
       "dev": "next dev",
       "build": "next build",
@@ -15,11 +14,15 @@
       "mysql": "^2.14.1",
       "next": "^6.1.1",
       "react": "^16.4.1",
-      "react-dom": "^16.4.1"
+      "react-dom": "^16.4.1",
+      "react-helmet": "^5.2.0",
+      "rebass": "^2.0.0-10",
+      "styled-components": "^3.3.3"
    },
    "devDependencies": {
       "@types/next": "^6.0.4",
       "@types/node": "^8.10.21",
-      "@types/react": "^16.4.6"
+      "@types/react": "^16.4.6",
+      "babel-plugin-styled-components": "^1.5.1"
    }
 }

@@ -1,22 +1,36 @@
+import gql from 'graphql-tag'
 import Helmet from 'react-helmet'
-import {Component} from 'react'
+import {Query} from 'react-apollo'
 import {Box} from 'rebass'
 
 import Layout from '../layouts'
+import WithApollo from '../components/with-apollo'
 
-export default class extends Component<{}> {
-  static async getInitialProps () {
-    return {}
+const GQL = gql`
+  query {
+    drafts {
+      id
+      prompt {
+        id
+      }
+      user {
+        email
+        id
+      }
+    }
   }
+`
 
-  render () {
-    return (
-      <Layout>
-        <Helmet>
-          <title>Drafts</title>
-        </Helmet>
-        <Box>hey</Box>
-      </Layout>
-    )
-  }
-}
+const HomePage = () => <Query query={GQL}>
+  {({loading, error, data}) => <Layout>
+    <Helmet>
+      <title>Drafts</title>
+    </Helmet>
+
+    {data && data.drafts.map(draft => <Box key={draft.id}>
+      {draft.id}
+    </Box>)}
+  </Layout>}
+</Query>
+
+export default WithApollo(HomePage)

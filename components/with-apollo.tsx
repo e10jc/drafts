@@ -12,7 +12,7 @@ const create = (initialState = {}) => new ApolloClient({
   connectToDevTools: process.browser,
   ssrMode: !process.browser,
   link: new HttpLink({
-    uri: 'http://localhost:3000',
+    uri: 'http://localhost:3000/graphql',
     credentials: 'same-origin',
   }),
   cache: new InMemoryCache().restore(initialState)
@@ -26,54 +26,53 @@ const initApollo = (initialState = {}) => {
   return client
 }
 
-export default (App) => {
-  return class Apollo extends React.Component {
-    apolloClient: any
+export default App => class Apollo extends React.Component {
+  apolloClient: any
 
-    static displayName = 'withApollo(App)'
+  static displayName = 'withApollo(App)'
 
-    static async getInitialProps (ctx) {
-      const {Component, router} = ctx
+  static async getInitialProps (ctx) {
+    const {Component, router} = ctx
 
-      let appProps = {}
-      if (App.getInitialProps) appProps = await App.getInitialProps(ctx)
+    let appProps = {}
+    if (App.getInitialProps) appProps = await App.getInitialProps(ctx)
 
-      const apollo = initApollo()
-      if (!process.browser) {
-        try {
-          await getDataFromTree(
+    const apollo = initApollo()
+    if (!process.browser) {
+      try {
+        await getDataFromTree(
+          <ApolloProvider client={apollo}>
             <App
               {...appProps}
               Component={Component}
               router={router}
               apolloClient={apollo}
             />
-          )
-        } catch (error) {
-          console.error('Error while running `getDataFromTree`', error)
-        }
-
-        Head.rewind()
+          </ApolloProvider>
+        )
+      } catch (error) {
+        console.error('Error while running `getDataFromTree`', error)
       }
 
-      // Extract query data from the Apollo store
-      const apolloState = apollo.cache.extract()
-
-      return {
-        ...appProps,
-        apolloState
-      }
+      Head.rewind()
     }
 
-    constructor (props) {
-      super(props)
-      this.apolloClient = initApollo(props.apolloState)
-    }
+    const apolloState = apollo.cache.extract()
 
-    render () {
-      return <ApolloProvider client={this.apolloClient}>
-        <App {...this.props} apolloClient={this.apolloClient} />
-      </ApolloProvider>
+    return {
+      ...appProps,
+      apolloState
     }
+  }
+
+  constructor (props) {
+    super(props)
+    this.apolloClient = initApollo(props.apolloState)
+  }
+
+  render () {
+    return <ApolloProvider client={this.apolloClient}>
+      <App {...this.props} />
+    </ApolloProvider>
   }
 }

@@ -1,15 +1,13 @@
 import {Box, Container, Text} from 'rebass'
 import styled, {injectGlobal} from 'styled-components'
 
-import WithApollo from '../components/with-apollo'
-
 injectGlobal`
   body, html {
     margin: 0;
   }
 `
 
-const Layout = ({children}) => <Wrapper>
+export default ({children}) => <Wrapper>
   <Box bg='black' color='white'>
     <Container>
       <Box>Drafts</Box>
@@ -26,8 +24,6 @@ const Layout = ({children}) => <Wrapper>
     </Container>
   </Box>
 </Wrapper>
-
-export default WithApollo(Layout)
 
 const Wrapper = styled.div`
   display: flex;

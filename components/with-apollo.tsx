@@ -61,7 +61,8 @@ export default App => class Apollo extends React.Component {
 
     return {
       ...appProps,
-      apolloState
+      apolloState,
+      user: ctx.req.user,
     }
   }
 

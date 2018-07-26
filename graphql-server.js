@@ -3,6 +3,7 @@ const {compare, hash} = require('bcrypt')
 const {sign} = require('jsonwebtoken')
 
 const Draft = require('./models/draft')
+const Prompt = require('./models/prompt')
 const User = require('./models/user')
 
 const typeDefs = gql`
@@ -23,6 +24,7 @@ const typeDefs = gql`
   }
 
   type Mutation {
+    createPrompt(title: String!): Prompt
     createUser(email: String!, password: String!): String
     loginUser(email: String!, password: String!): String
     logoutUser: String
@@ -30,6 +32,7 @@ const typeDefs = gql`
 
   type Query {
     drafts: [Draft]
+    prompts: [Prompt]
   }
 `
 
@@ -38,6 +41,10 @@ const setCookie = (token, {res}) => token ? res.cookie('token', token) : res.cle
 
 const resolvers = {
   Mutation: {
+    createPrompt: async (obj, {title}) => {
+      return Prompt.query().insert({title})
+    },
+
     createUser: async (obj, {email, password}, {res}) => {
       const hashedPassword = await hash(password, 10)
       const user = await User.query().insert({email, password: hashedPassword})
@@ -60,12 +67,13 @@ const resolvers = {
     }
   },
   Query: {
-    drafts: async (obj, args, context, info) => Draft.query().eager('[prompt, user]')
+    drafts: async (obj, args, context, info) => Draft.query().eager('[prompt, user]'),
+    prompts: async (obj, args, context, info) => Prompt.query(),
   }
 }
 
 module.exports = new ApolloServer({
-  context: ({res}) => ({res}),
+  context: ({req, res}) => ({req, res}),
   resolvers, 
   typeDefs,
 })

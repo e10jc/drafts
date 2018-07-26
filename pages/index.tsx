@@ -27,7 +27,7 @@ const HomePage = () => <Query query={GQL}>
       <title>Drafts</title>
     </Helmet>
 
-    {data && data.drafts.map(draft => <Box key={draft.id}>
+    {data && data.drafts && data.drafts.map(draft => <Box key={draft.id}>
       {draft.id}
     </Box>)}
   </Layout>}

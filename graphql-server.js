@@ -1,5 +1,6 @@
 const {ApolloServer, gql} = require('apollo-server-express')
 const {compare, hash} = require('bcrypt')
+const {sign} = require('jsonwebtoken')
 
 const Draft = require('./models/draft')
 const User = require('./models/user')
@@ -22,8 +23,8 @@ const typeDefs = gql`
   }
 
   type Mutation {
-    createUser(email: String!, password: String!): User
-    loginUser(email: String!, password: String!): User
+    createUser(email: String!, password: String!): String
+    loginUser(email: String!, password: String!): String
   }
 
   type Query {
@@ -31,18 +32,20 @@ const typeDefs = gql`
   }
 `
 
+const createToken = user => sign({id: user.id, email: user.email}, process.env.JWT_SECRET)
+
 const resolvers = {
   Mutation: {
     createUser: async (obj, {email, password}) => {
       const hashedPassword = await hash(password, 10)
       const user = await User.query().insert({email, password: hashedPassword})
-      return user
+      return createToken(user)
     },
 
     loginUser: async (obj, {email, password}) => {
       const user = await User.query().where({email}).first()
       if (user && await compare(password, user.password)) {
-        return user
+        return createToken(user)
       }
     },
   },

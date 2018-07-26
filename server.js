@@ -1,4 +1,5 @@
 const express = require('express')
+const jwt = require('express-jwt')
 const next = require('next')
 
 const graphqlServer = require('./graphql-server')
@@ -10,6 +11,8 @@ const handle = nextApp.getRequestHandler()
 
 nextApp.prepare().then(() => {
   const app = express()
+
+  app.use(jwt({credentialsRequired: false, secret: process.env.JWT_SECRET}))
 
   graphqlServer.applyMiddleware({app})
 

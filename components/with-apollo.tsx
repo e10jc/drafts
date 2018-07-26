@@ -26,7 +26,7 @@ const initApollo = (initialState = {}) => {
   return client
 }
 
-const AuthContext = React.createContext(null)
+export const AuthContext = React.createContext(null)
 
 interface State {
   user: object,

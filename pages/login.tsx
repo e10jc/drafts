@@ -1,7 +1,7 @@
 import gql from 'graphql-tag'
 import {Component} from 'react'
 import {Mutation} from 'react-apollo'
-import {Box, Button, Label, Input} from 'rebass'
+import {Button, Heading, Label, Input} from 'rebass'
 
 import Layout from '../layouts'
 import WithApollo from '../components/with-apollo'
@@ -24,17 +24,21 @@ class LoginPage extends Component<{}, State> {
   }
 
   render () {
-    return <Mutation mutation={CREATE_USER}>
-      {(loginUser, {data}) => <Layout>
-        <Box>
-          <form onSubmit={this.handleSubmit(loginUser)}>
-            <Label htmlFor='email'>Email</Label>
-            <Input id='email' name='email' onChange={this.handleInputChange('email')} type='email' />
-            <Label htmlFor='password'>Password</Label>
-            <Input id='password' name='password' onChange={this.handleInputChange('password')} type='password' />
-            <Button type='submit'>Submit</Button>
-          </form>
-        </Box>
+    return <Mutation
+      mutation={CREATE_USER}
+      onCompleted={() => {
+        window.location.href = '/'
+      }}
+    >
+      {(loginUser) => <Layout>
+        <Heading>Login</Heading>
+        <form onSubmit={this.handleSubmit(loginUser)}>
+          <Label htmlFor='email'>Email</Label>
+          <Input id='email' name='email' onChange={this.handleInputChange('email')} type='email' />
+          <Label htmlFor='password'>Password</Label>
+          <Input id='password' name='password' onChange={this.handleInputChange('password')} type='password' />
+          <Button type='submit'>Submit</Button>
+        </form>
       </Layout>}
     </Mutation>
   }
@@ -45,8 +49,7 @@ class LoginPage extends Component<{}, State> {
 
   handleSubmit = loginUser => async e => {
     e.preventDefault()
-    
-    const data = await loginUser({variables: {
+    loginUser({variables: {
       email: this.state.email,
       password: this.state.password,
     }})

@@ -1,3 +1,4 @@
+const cookieParser = require('cookie-parser')
 const express = require('express')
 const jwt = require('express-jwt')
 const next = require('next')
@@ -12,7 +13,13 @@ const handle = nextApp.getRequestHandler()
 nextApp.prepare().then(() => {
   const app = express()
 
-  app.use(jwt({credentialsRequired: false, secret: process.env.JWT_SECRET}))
+  app.use(cookieParser())
+
+  app.use(jwt({
+    credentialsRequired: false, 
+    getToken: req => req.cookies.token,
+    secret: process.env.JWT_SECRET,
+  }))
 
   graphqlServer.applyMiddleware({app})
 

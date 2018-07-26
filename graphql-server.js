@@ -32,20 +32,24 @@ const typeDefs = gql`
   }
 `
 
-const createToken = user => sign({id: user.id, email: user.email}, process.env.JWT_SECRET)
+const createToken = (user, {res}) => {
+  const token = sign({id: user.id, email: user.email}, process.env.JWT_SECRET)
+  res.cookie('token', token)
+  return token
+}
 
 const resolvers = {
   Mutation: {
-    createUser: async (obj, {email, password}) => {
+    createUser: async (obj, {email, password}, {res}) => {
       const hashedPassword = await hash(password, 10)
       const user = await User.query().insert({email, password: hashedPassword})
-      return createToken(user)
+      return createToken(user, {res})
     },
 
-    loginUser: async (obj, {email, password}) => {
+    loginUser: async (obj, {email, password}, {res}) => {
       const user = await User.query().where({email}).first()
       if (user && await compare(password, user.password)) {
-        return createToken(user)
+        return createToken(user, {res})
       }
     },
   },
@@ -54,4 +58,8 @@ const resolvers = {
   }
 }
 
-module.exports = new ApolloServer({resolvers, typeDefs})
+module.exports = new ApolloServer({
+  context: ({res}) => ({res}),
+  resolvers, 
+  typeDefs,
+})

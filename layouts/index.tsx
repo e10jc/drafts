@@ -1,6 +1,8 @@
 import {Box, Container, Provider, Text} from 'rebass'
 import styled, {injectGlobal} from 'styled-components'
 
+import Header from '../components/header'
+
 injectGlobal`
   body, html {
     margin: 0;
@@ -9,11 +11,7 @@ injectGlobal`
 
 export default ({children}) => <Provider>
   <Wrapper>
-    <Box bg='black' color='white'>
-      <Container>
-        <Box>Drafts</Box>
-      </Container>
-    </Box>
+    <Header />
     <Box flex='1'>
       <Container>
         {children}

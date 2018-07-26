@@ -26,13 +26,24 @@ const initApollo = (initialState = {}) => {
   return client
 }
 
-export default App => class Apollo extends React.Component {
-  apolloClient: any
+const AuthContext = React.createContext(null)
 
-  static displayName = 'withApollo(App)'
+interface State {
+  user: object,
+}
+
+export default App => class Apollo extends React.Component<{}, State> {
+  apolloClient: any
+  authContext: any
+
+  state = {
+    user: null,
+  }
+
+  static displayName = `withApollo(${App.displayName})`
 
   static async getInitialProps (ctx) {
-    const {Component, router} = ctx
+    const {Component, req, router} = ctx
 
     let appProps = {}
     if (App.getInitialProps) appProps = await App.getInitialProps(ctx)
@@ -62,18 +73,21 @@ export default App => class Apollo extends React.Component {
     return {
       ...appProps,
       apolloState,
-      user: ctx.req.user,
+      user: req && req.user,
     }
   }
 
   constructor (props) {
     super(props)
     this.apolloClient = initApollo(props.apolloState)
+    this.state = {user: props.user}
   }
 
   render () {
     return <ApolloProvider client={this.apolloClient}>
-      <App {...this.props} />
+      <AuthContext.Provider value={this.state.user}>
+        <App {...this.props} />
+      </AuthContext.Provider>
     </ApolloProvider>
   }
 }

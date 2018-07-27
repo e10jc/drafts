@@ -15,26 +15,28 @@ const LOGOUT = gql`
 export default class extends Component<{}> {
   render () {
     return <AuthContext.Consumer>
-      {user => <Box bg='red' color='white' p={1}>
+      {user => <Box bg='black' color='white'>
         <Container>
-          <Flex justifyContent='space-between'>
-            <Link href='/'>Drafts</Link>
+          <Flex alignItems='center' justifyContent='space-between'>
+            <Link color='white' href='/' p={1}>Drafts</Link>
     
-            {!user ? <Box>
-              <Link href='/login'>Login</Link>
-              <Link href='/signup'>Signup</Link>
-            </Box> : <Box>
-              <Link href='/prompts'>Prompts</Link>
+            <Box>
+              <Link color='white' href='/prompts' p={1}>Prompts</Link>
 
-              <Mutation
-                mutation={LOGOUT}
-                onCompleted={() => {
-                  window.location.href = '/'
-                }}
-              >
-                {logoutUser => <Link href='javascript:void(0)' onClick={this.handleLogoutClick(logoutUser)}>Logout</Link>}
-              </Mutation>
-            </Box>}
+              {!user ? <>
+                <Link color='white' href='/login' p={1}>Login</Link>
+                <Link color='white' href='/signup' p={1}>Signup</Link>
+              </> : <>
+                <Mutation
+                  mutation={LOGOUT}
+                  onCompleted={() => {
+                    window.location.href = '/'
+                  }}
+                >
+                  {logoutUser => <Link color='white' href='javascript:void(0)' onClick={this.handleLogoutClick(logoutUser)} p={1}>Logout</Link>}
+                </Mutation>
+              </>}
+            </Box>
           </Flex>
         </Container>
       </Box>}

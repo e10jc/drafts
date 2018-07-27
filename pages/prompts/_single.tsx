@@ -2,7 +2,7 @@ import gql from 'graphql-tag'
 import {Component} from 'react'
 import {Query} from 'react-apollo'
 import Helmet from 'react-helmet'
-import {Box, Heading} from 'rebass'
+import {Box, Heading, Link} from 'rebass'
 
 interface Props {
   query: {
@@ -13,6 +13,11 @@ interface Props {
 const GET_PROMPT = gql`
   query prompt($slug: String!) {
     prompt(slug: $slug) {
+      drafts {
+        body
+        id
+        slug
+      }
       id
       title
     }
@@ -30,6 +35,12 @@ class PromptPage extends Component<Props> {
           </Helmet>
 
           <Heading>{data.prompt.title}</Heading>
+
+          {data.prompt.drafts.map(draft => <Box key={draft.id}>
+            <Link href={`/drafts/${draft.slug}`}>Draft {draft.id}</Link>
+          </Box>)}
+
+          <Link href={`/drafts/new?promptId=${data.prompt.id}`}>New draft</Link>
         </Box>
       }}
     </Query>

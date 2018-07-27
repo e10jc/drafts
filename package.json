@@ -5,12 +5,11 @@
    "scripts": {
       "dev": "nodemon server.js",
       "build": "next build",
-      "start": "NODE_ENV=production node server.js"
+      "start": "node server.js"
    },
    "author": "@e10jon",
    "license": "UNLICENSED",
    "dependencies": {
-      "@zeit/next-typescript": "^1.1.0",
       "apollo-boost": "^0.1.10",
       "apollo-server-express": "^2.0.0",
       "bcrypt": "^1.0.3",
@@ -39,6 +38,7 @@
       "@types/next": "^6.0.4",
       "@types/node": "^8.10.21",
       "@types/react": "^16.4.6",
+      "@zeit/next-typescript": "^1.1.0",
       "babel-plugin-styled-components": "^1.5.1",
       "dotenv": "^6.0.0",
       "nodemon": "^1.18.3"

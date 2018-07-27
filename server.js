@@ -23,6 +23,8 @@ nextApp.prepare().then(() => {
 
   graphqlServer.applyMiddleware({app})
 
+  app.get('/drafts/new', (req, res) => handle(req, res))
+  app.get('/drafts/:slug', (req, res) => nextApp.render(req, res, '/drafts/_single', {slug: req.params.slug}))
   app.get('/prompts/new', (req, res) => handle(req, res))
   app.get('/prompts/:slug', (req, res) => nextApp.render(req, res, '/prompts/_single', {slug: req.params.slug}))
 

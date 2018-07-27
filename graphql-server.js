@@ -9,6 +9,7 @@ const User = require('./models/user')
 
 const typeDefs = gql`
   type Draft {
+    body: String
     id: Int!
     prompt: Prompt
     slug: String
@@ -16,6 +17,7 @@ const typeDefs = gql`
   }
 
   type Prompt {
+    drafts: [Draft]
     id: Int!
     slug: String
     title: String
@@ -28,6 +30,7 @@ const typeDefs = gql`
   }
 
   type Mutation {
+    createDraft(promptId: Int!, body: String!): Draft
     createPrompt(title: String!): Prompt
     createUser(email: String!, password: String!): String
     loginUser(email: String!, password: String!): String
@@ -35,6 +38,7 @@ const typeDefs = gql`
   }
 
   type Query {
+    draft(slug: String!): Draft
     drafts: [Draft]
     prompt(slug: String!): Prompt
     prompts: [Prompt]
@@ -46,6 +50,16 @@ const setCookie = (token, {res}) => token ? res.cookie('token', token) : res.cle
 
 const resolvers = {
   Mutation: {
+    createDraft: async (obj, {body, promptId}, {req}) => {
+      if (!req.user) throw new AuthenticationError('must be logged-in')
+      return Draft.query().insert({
+        body,
+        promptId,
+        slug: slugify(body), 
+        userId: req.user.id
+      })
+    },
+
     createPrompt: async (obj, {title}, {req}) => {
       if (!req.user) throw new AuthenticationError('must be logged-in')
       return Prompt.query().insert({
@@ -76,8 +90,9 @@ const resolvers = {
     }
   },
   Query: {
+    draft: async (obj, {slug}) => Draft.query().findOne({slug}),
     drafts: async (obj, args, context, info) => Draft.query().eager('[prompt, user]'),
-    prompt: async (obj, {slug}) => Prompt.query().findOne({slug}),
+    prompt: async (obj, {slug}) => Prompt.query().findOne({slug}).eager('drafts'),
     prompts: async (obj, args, context, info) => Prompt.query(),
   }
 }

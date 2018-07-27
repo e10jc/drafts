@@ -5,6 +5,7 @@ module.exports = {
       table.integer('userId').unsigned()
       table.integer('promptId').unsigned()
       table.string('slug').unique()
+      table.text('body')
     })
   ),
 

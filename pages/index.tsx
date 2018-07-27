@@ -1,10 +1,7 @@
 import gql from 'graphql-tag'
 import Helmet from 'react-helmet'
 import {Query} from 'react-apollo'
-import {Box} from 'rebass'
-
-import Layout from '../layouts'
-import WithApollo from '../components/with-apollo'
+import {Box, Heading} from 'rebass'
 
 const GQL = gql`
   query {
@@ -22,15 +19,20 @@ const GQL = gql`
 `
 
 const HomePage = () => <Query query={GQL}>
-  {({loading, error, data}) => <Layout>
-    <Helmet>
-      <title>Drafts</title>
-    </Helmet>
+  {({loading, error, data}) => {
+    if (loading || error) return null
+    return <Box>
+      <Helmet>
+        <title>Drafts</title>
+      </Helmet>
 
-    {data && data.drafts && data.drafts.map(draft => <Box key={draft.id}>
-      {draft.id}
-    </Box>)}
-  </Layout>}
+      <Heading>Drafts</Heading>
+
+      {data.drafts.map(draft => <Box key={draft.id}>
+        {draft.id}
+      </Box>)}
+    </Box>
+  }}
 </Query>
 
-export default WithApollo(HomePage)
+export default HomePage

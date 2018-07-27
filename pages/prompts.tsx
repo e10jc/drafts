@@ -1,9 +1,7 @@
 import gql from 'graphql-tag'
 import {Query} from 'react-apollo'
-import {Box} from 'rebass'
-
-import WithApollo from '../components/with-apollo'
-import Layout from '../layouts'
+import Helmet from 'react-helmet'
+import {Box, Heading} from 'rebass'
 
 const PROMPTS = gql`
   query {
@@ -15,11 +13,20 @@ const PROMPTS = gql`
 `
 
 const PromptsPage = () => <Query query={PROMPTS}>
-  {data => <Layout>
-    <Box>
-      prompts
+  {({loading, error, data}) => {
+    if (loading || error) return null
+    return <Box>
+      <Helmet>
+        <title>Prompts</title>
+      </Helmet>
+
+      <Heading>Prompts</Heading>
+
+      {data.prompts.map(prompt => <Box key={prompt.id}>
+        <Heading fontSize={4}>{prompt.title}</Heading>
+      </Box>)}
     </Box>
-  </Layout>}
+  }}
 </Query>
 
-export default WithApollo(PromptsPage)
+export default PromptsPage

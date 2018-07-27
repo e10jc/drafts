@@ -1,9 +1,10 @@
 import gql from 'graphql-tag'
+import NextLink from 'next/link'
 import {Component} from 'react'
 import {Mutation} from 'react-apollo'
 import {Box, Container, Flex, Link} from 'rebass'
 
-import {AuthContext} from '../components/with-apollo'
+import {AuthContext} from '../pages/_app'
 
 const LOGOUT = gql`
   mutation {
@@ -14,16 +15,16 @@ const LOGOUT = gql`
 export default class extends Component<{}> {
   render () {
     return <AuthContext.Consumer>
-      {user => <Box bg='black' color='white'>
+      {user => <Box bg='red' color='white' p={1}>
         <Container>
           <Flex justifyContent='space-between'>
-            <Link href='/'>Drafts</Link>
+            <NextLink href='/'><a>Drafts</a></NextLink>
     
             {!user ? <Box>
-              <Link href='/login'>Login</Link>
-              <Link href='/signup'>Signup</Link>
+              <NextLink href='/login'><a>Login</a></NextLink>
+              <NextLink href='/signup'><a>Signup</a></NextLink>
             </Box> : <Box>
-              <Link href='/prompts'>Prompts</Link>
+              <NextLink href='/prompts'><a>Prompts</a></NextLink>
 
               <Mutation
                 mutation={LOGOUT}

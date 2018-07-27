@@ -1,10 +1,7 @@
 import gql from 'graphql-tag'
 import {Component} from 'react'
 import {Mutation} from 'react-apollo'
-import {Button, Heading, Label, Input} from 'rebass'
-
-import Layout from '../layouts'
-import WithApollo from '../components/with-apollo'
+import {Box, Button, Heading, Label, Input} from 'rebass'
 
 const CREATE_USER = gql`
   mutation ($email: String!, $password: String!) {
@@ -33,7 +30,7 @@ class SignupPage extends Component<{}, State> {
         window.location.href = '/'
       }}
     >
-      {(createUser) => <Layout>
+      {(createUser) => <Box>
         <Heading>Signup</Heading>
         <form onSubmit={this.handleSubmit(createUser)}>
           <Label htmlFor='email'>Email</Label>
@@ -42,7 +39,7 @@ class SignupPage extends Component<{}, State> {
           <Input id='password' name='password' onChange={this.handleInputChange('password')} type='password' />
           <Button type='submit'>Submit</Button>
         </form>
-      </Layout>}
+      </Box>}
     </Mutation>
   }
 
@@ -60,4 +57,4 @@ class SignupPage extends Component<{}, State> {
   }
 }
 
-export default WithApollo(SignupPage)
+export default SignupPage

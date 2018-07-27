@@ -2,7 +2,7 @@ import {ApolloClient, HttpLink, InMemoryCache} from 'apollo-boost'
 import fetch from 'isomorphic-unfetch'
 import Head from 'next/head'
 import * as React from 'react'
-import {ApolloProvider, getDataFromTree} from 'react-apollo'
+import {getDataFromTree} from 'react-apollo'
 
 if (!process.browser) {
   global.fetch = fetch
@@ -26,40 +26,28 @@ const initApollo = (initialState = {}) => {
   return client
 }
 
-export const AuthContext = React.createContext(null)
-
-interface State {
-  user: object,
-}
-
-export default App => class Apollo extends React.Component<{}, State> {
+export default App => class Apollo extends React.Component<{}> {
   apolloClient: any
   authContext: any
-
-  state = {
-    user: null,
-  }
 
   static displayName = `withApollo(${App.displayName})`
 
   static async getInitialProps (ctx) {
-    const {Component, req, router} = ctx
+    const {Component, router} = ctx
 
     let appProps = {}
-    if (App.getInitialProps) appProps = await App.getInitialProps(ctx)
+    if (App.getInitialProps) appProps = await App.getInitialProps(ctx.ctx)
 
     const apollo = initApollo()
     if (!process.browser) {
       try {
         await getDataFromTree(
-          <ApolloProvider client={apollo}>
-            <App
-              {...appProps}
-              Component={Component}
-              router={router}
-              apolloClient={apollo}
-            />
-          </ApolloProvider>
+          <App
+            {...appProps}
+            Component={Component}
+            router={router}
+            apolloClient={apollo}
+          />
         )
       } catch (error) {
         console.error('Error while running `getDataFromTree`', error)
@@ -73,21 +61,18 @@ export default App => class Apollo extends React.Component<{}, State> {
     return {
       ...appProps,
       apolloState,
-      user: req && req.user,
     }
   }
 
   constructor (props) {
     super(props)
     this.apolloClient = initApollo(props.apolloState)
-    this.state = {user: props.user}
   }
 
   render () {
-    return <ApolloProvider client={this.apolloClient}>
-      <AuthContext.Provider value={this.state.user}>
-        <App {...this.props} />
-      </AuthContext.Provider>
-    </ApolloProvider>
+    return <App
+      {...this.props}
+      apolloClient={this.apolloClient}
+    />
   }
 }

@@ -7,3 +7,8 @@ declare namespace NodeJS {
     browser: boolean,
   }
 }
+
+interface Prompt {
+  id: number,
+  title: string,
+}

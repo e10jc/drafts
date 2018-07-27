@@ -3,6 +3,8 @@ import {Query} from 'react-apollo'
 import Helmet from 'react-helmet'
 import {Box, Heading} from 'rebass'
 
+import Link from '../components/link'
+
 const PROMPTS = gql`
   query {
     prompts {
@@ -25,6 +27,8 @@ const PromptsPage = () => <Query query={PROMPTS}>
       {data.prompts.map(prompt => <Box key={prompt.id}>
         <Heading fontSize={4}>{prompt.title}</Heading>
       </Box>)}
+
+      <Link href='/prompts/new'>New prompt</Link>
     </Box>
   }}
 </Query>

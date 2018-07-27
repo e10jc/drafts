@@ -1,4 +1,4 @@
-const {ApolloServer, gql} = require('apollo-server-express')
+const {ApolloServer, AuthenticationError, gql} = require('apollo-server-express')
 const {compare, hash} = require('bcrypt')
 const {sign} = require('jsonwebtoken')
 
@@ -41,8 +41,9 @@ const setCookie = (token, {res}) => token ? res.cookie('token', token) : res.cle
 
 const resolvers = {
   Mutation: {
-    createPrompt: async (obj, {title}) => {
-      return Prompt.query().insert({title})
+    createPrompt: async (obj, {title}, {req}) => {
+      if (!req.user) throw new AuthenticationError('must be logged-in')
+      return Prompt.query().insert({title, userId: req.user.id})
     },
 
     createUser: async (obj, {email, password}, {res}) => {
@@ -55,11 +56,10 @@ const resolvers = {
 
     loginUser: async (obj, {email, password}, {res}) => {
       const user = await User.query().where({email}).first()
-      if (user && await compare(password, user.password)) {
-        const token = createToken(user)
-        setCookie(token, {res})
-        return token
-      }
+      if (!user || !await compare(password, user.password)) throw new AuthenticationError('invalid credentials')
+      const token = createToken(user)
+      setCookie(token, {res})
+      return token
     },
 
     logoutUser: async (obj, args, {res}) => {

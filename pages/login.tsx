@@ -23,8 +23,8 @@ class LoginPage extends Component<{}, State> {
   render () {
     return <Mutation
       mutation={CREATE_USER}
-      onError={() => {
-        alert('There was an error')
+      onError={({message}) => {
+        alert(`Error: ${message}`)
       }}
       onCompleted={() => {
         window.location.href = '/'

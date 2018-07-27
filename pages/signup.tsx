@@ -23,8 +23,8 @@ class SignupPage extends Component<{}, State> {
   render () {
     return <Mutation
       mutation={CREATE_USER}
-      onError={() => {
-        alert('There was an error')
+      onError={({message}) => {
+        alert(`Error: ${message}`)
       }}
       onCompleted={() => {
         window.location.href = '/'
@@ -49,8 +49,7 @@ class SignupPage extends Component<{}, State> {
 
   handleSubmit = createUser => async e => {
     e.preventDefault()
-    
-    const data = await createUser({variables: {
+    createUser({variables: {
       email: this.state.email,
       password: this.state.password,
     }})

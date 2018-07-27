@@ -1,6 +1,7 @@
 const {ApolloServer, AuthenticationError, gql} = require('apollo-server-express')
 const {compare, hash} = require('bcrypt')
 const {sign} = require('jsonwebtoken')
+const slugify = require('slugify')
 
 const Draft = require('./models/draft')
 const Prompt = require('./models/prompt')
@@ -10,15 +11,18 @@ const typeDefs = gql`
   type Draft {
     id: Int!
     prompt: Prompt
+    slug: String
     user: User
   }
 
   type Prompt {
     id: Int!
+    slug: String
     title: String
   }
 
   type User {
+    handle: String
     id: Int!
     email: String
   }
@@ -32,6 +36,7 @@ const typeDefs = gql`
 
   type Query {
     drafts: [Draft]
+    prompt(slug: String!): Prompt
     prompts: [Prompt]
   }
 `
@@ -43,7 +48,11 @@ const resolvers = {
   Mutation: {
     createPrompt: async (obj, {title}, {req}) => {
       if (!req.user) throw new AuthenticationError('must be logged-in')
-      return Prompt.query().insert({title, userId: req.user.id})
+      return Prompt.query().insert({
+        slug: slugify(title), 
+        title, 
+        userId: req.user.id
+      })
     },
 
     createUser: async (obj, {email, password}, {res}) => {
@@ -68,6 +77,7 @@ const resolvers = {
   },
   Query: {
     drafts: async (obj, args, context, info) => Draft.query().eager('[prompt, user]'),
+    prompt: async (obj, {slug}) => Prompt.query().findOne({slug}),
     prompts: async (obj, args, context, info) => Prompt.query(),
   }
 }

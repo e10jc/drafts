@@ -4,6 +4,7 @@ module.exports = {
       table.increments()
       table.integer('userId').unsigned()
       table.integer('promptId').unsigned()
+      table.string('slug').unique()
     })
   ),
 

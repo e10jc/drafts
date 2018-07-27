@@ -15,6 +15,7 @@ injectGlobal`
 
 interface Props {
   apolloClient: any,
+  query: object,
 }
 
 interface State {
@@ -28,9 +29,10 @@ class App extends NextApp<Props> {
     user: null,
   }
 
-  static async getInitialProps ({req}) {
+  static async getInitialProps (ctx) {
     return {
-      user: req && req.user,
+      query: ctx.query,
+      user: ctx.req && ctx.req.user,
     }
   }
 
@@ -40,7 +42,7 @@ class App extends NextApp<Props> {
   }
 
   render () {
-    const {Component, pageProps, apolloClient} = this.props
+    const {Component, apolloClient, query} = this.props
 
     return <NextContainer>
       <ApolloProvider client={apolloClient}>
@@ -50,7 +52,7 @@ class App extends NextApp<Props> {
               <Header />
               <Box flex='1'>
                 <Container>
-                  <Component {...pageProps} />
+                  <Component query={query} />
                 </Container>
               </Box>
               <Box bg='black' color='white'>

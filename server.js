@@ -23,9 +23,10 @@ nextApp.prepare().then(() => {
 
   graphqlServer.applyMiddleware({app})
 
-  app.get('*', (req, res) => {
-    return handle(req, res)
-  })
+  app.get('/prompts/new', (req, res) => handle(req, res))
+  app.get('/prompts/:slug', (req, res) => nextApp.render(req, res, '/prompts/_single', {slug: req.params.slug}))
+
+  app.get('*', (req, res) => handle(req, res))
 
   app.listen(port, (err) => {
     if (err) throw err

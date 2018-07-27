@@ -4,10 +4,13 @@ import {Component} from 'react'
 import {Mutation} from 'react-apollo'
 import {Box, Button, Heading, Label, Input} from 'rebass'
 
+import {GET_PROMPTS} from '../prompts'
+
 const CREATE_PROMPT = gql`
   mutation ($title: String!) {
     createPrompt(title: $title) {
       id
+      slug
       title
     }
   }
@@ -30,6 +33,13 @@ class NewPromptPage extends Component<{}, State> {
       }}
       onCompleted={data => {
         Router.push('/prompts')
+      }}
+      update={(cache, {data: {createPrompt}}) => {
+        const {prompts} = cache.readQuery({query: GET_PROMPTS})
+        cache.writeQuery({
+          query: GET_PROMPTS,
+          data: {prompts: prompts.concat([createPrompt])}
+        })
       }}
     >
       {(createPrompt) => <Box>

@@ -5,16 +5,17 @@ import {Box, Heading} from 'rebass'
 
 import Link from '../components/link'
 
-const PROMPTS = gql`
+export const GET_PROMPTS = gql`
   query {
     prompts {
       id
+      slug
       title
     }
   }
 `
 
-const PromptsPage = () => <Query query={PROMPTS}>
+const PromptsPage = () => <Query query={GET_PROMPTS}>
   {({loading, error, data}) => {
     if (loading || error) return null
     return <Box>
@@ -25,7 +26,9 @@ const PromptsPage = () => <Query query={PROMPTS}>
       <Heading>Prompts</Heading>
 
       {data.prompts.map(prompt => <Box key={prompt.id}>
-        <Heading fontSize={4}>{prompt.title}</Heading>
+        <Heading fontSize={4}>
+          <Link href={`/prompts/${prompt.slug}`}>{prompt.title}</Link>
+        </Heading>
       </Box>)}
 
       <Link href='/prompts/new'>New prompt</Link>

@@ -1,8 +1,8 @@
 const {ApolloServer, AuthenticationError, gql} = require('apollo-server-express')
 const {compare} = require('bcrypt')
 const {sign} = require('jsonwebtoken')
-const slugify = require('slugify')
 
+const createSlug = require('./helpers/create-slug')
 const Draft = require('./models/draft')
 const Prompt = require('./models/prompt')
 const User = require('./models/user')
@@ -61,22 +61,26 @@ const resolvers = {
       return Draft.query().insert({
         body,
         promptId,
-        slug: slugify(body), 
-        userId: req.user.id
+        slug: createSlug(body, {Model: Draft, field: 'slug'}),
+        userId: req.user.id,
       })
     },
 
     createPrompt: async (obj, {title}, {req}) => {
       if (!req.user) throw new AuthenticationError('must be logged-in')
       return Prompt.query().insert({
-        slug: slugify(title), 
+        slug: createSlug(title, {Model: Prompt, field: 'slug'}), 
         title, 
-        userId: req.user.id
+        userId: req.user.id,
       })
     },
 
-    createUser: async (obj, {email, password}, {res}) => {
-      const user = await User.query().insert({email, password: User.createPasswordHash(password)})
+    createUser: async (obj, {email, handle, password}, {res}) => {
+      const user = await User.query().insert({
+        email, 
+        handle,
+        password: User.createPasswordHash(password),
+      })
       const token = createToken(user)
       setCookie(token, {res})
       return token

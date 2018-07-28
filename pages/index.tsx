@@ -37,7 +37,9 @@ const HomePage = () => <AuthContext.Consumer>
         {data.prompts.map(prompt => <Box key={prompt.id} mb={3}>
           <Heading fontSize={4} mb={2}>{prompt.title}</Heading>
           {prompt.drafts.map(draft => <Box key={draft.id} mb={2}>
-            <Link href={`/@${draft.user.handle}/${draft.slug}`}>Draft {draft.id} by @{draft.user.handle}</Link>
+            <Link href={`/@${draft.user.handle}/${draft.slug}`}>Draft {draft.id}</Link>
+            &nbsp;by&nbsp;
+            <Link href={`/@${draft.user.handle}`}>@{draft.user.handle}</Link>
           </Box>)}
           <Link href={`/drafts/new?promptId=${prompt.id}`}>New draft</Link>
         </Box>)}

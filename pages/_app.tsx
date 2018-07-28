@@ -4,6 +4,7 @@ import {ApolloProvider} from 'react-apollo'
 import {Box, Container, Provider as ThemeProvider, Text} from 'rebass'
 import styled, {injectGlobal} from 'styled-components'
 
+import Footer from '../components/footer'
 import Header from '../components/header'
 import WithApollo from '../components/with-apollo'
 
@@ -55,11 +56,7 @@ class App extends NextApp<Props> {
                   <Component query={query} />
                 </Container>
               </Box>
-              <Box bg='black' color='white'>
-                <Container>
-                  <Text>&copy;{new Date().getFullYear()} Drafts</Text>
-                </Container>
-              </Box>
+              <Footer />
             </Wrapper>
           </ThemeProvider>
         </AuthContext.Provider>

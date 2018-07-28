@@ -12,20 +12,25 @@ const LOGOUT = gql`
   }
 `
 
+const LINK_PROPS = {
+  color: 'white',
+  p: 1,
+}
+
 export default class extends Component<{}> {
   render () {
     return <AuthContext.Consumer>
       {user => <Box bg='black' color='white'>
         <Container>
           <Flex alignItems='center' justifyContent='space-between'>
-            <Link color='white' href='/' p={1}>Drafts</Link>
+            <Flex>
+              <Link href='/' {...LINK_PROPS}>Drafts</Link>
+            </Flex>
     
-            <Box>
-              <Link color='white' href='/prompts' p={1}>Prompts</Link>
-
+            <Flex>
               {!user ? <>
-                <Link color='white' href='/login' p={1}>Login</Link>
-                <Link color='white' href='/signup' p={1}>Signup</Link>
+                <Link href='/login' {...LINK_PROPS}>Login</Link>
+                <Link href='/signup' {...LINK_PROPS}>Signup</Link>
               </> : <>
                 <Mutation
                   mutation={LOGOUT}
@@ -33,10 +38,10 @@ export default class extends Component<{}> {
                     window.location.href = '/'
                   }}
                 >
-                  {logoutUser => <Link color='white' href='javascript:void(0)' onClick={this.handleLogoutClick(logoutUser)} p={1}>Logout</Link>}
+                  {logoutUser => <Link href='javascript:void(0)' onClick={this.handleLogoutClick(logoutUser)} {...LINK_PROPS}>Logout</Link>}
                 </Mutation>
               </>}
-            </Box>
+            </Flex>
           </Flex>
         </Container>
       </Box>}

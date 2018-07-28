@@ -48,6 +48,7 @@ const typeDefs = gql`
 const createToken = user => sign({
   id: user.id,
   handle: user.handle, 
+  isAdmin: user.isAdmin,
 }, process.env.JWT_SECRET)
 
 const setCookie = (token, {res}) => token ? res.cookie('token', token) : res.clearCookie('token')
@@ -96,7 +97,7 @@ const resolvers = {
     draft: async (obj, {slug}) => Draft.query().findOne({slug}),
     drafts: async (obj, args, context, info) => Draft.query().eager('[prompt, user]'),
     prompt: async (obj, {slug}) => Prompt.query().findOne({slug}).eager('drafts'),
-    prompts: async (obj, args, context, info) => Prompt.query(),
+    prompts: async (obj, args, context, info) => Prompt.query().eager('[drafts.user]'),
   }
 }
 

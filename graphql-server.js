@@ -24,9 +24,9 @@ const typeDefs = gql`
   }
 
   type User {
+    drafts: [Draft]
     handle: String
     id: Int!
-    email: String
   }
 
   type Mutation {
@@ -42,6 +42,7 @@ const typeDefs = gql`
     drafts: [Draft]
     prompt(slug: String!): Prompt
     prompts: [Prompt]
+    user(handle: String!): User
   }
 `
 
@@ -94,10 +95,11 @@ const resolvers = {
     }
   },
   Query: {
-    draft: async (obj, {slug}) => Draft.query().findOne({slug}),
-    drafts: async (obj, args, context, info) => Draft.query().eager('[prompt, user]'),
-    prompt: async (obj, {slug}) => Prompt.query().findOne({slug}).eager('drafts'),
-    prompts: async (obj, args, context, info) => Prompt.query().eager('[drafts.user]'),
+    draft: (obj, {slug}) => Draft.query().findOne({slug}),
+    drafts: (obj, args, context, info) => Draft.query().eager('[prompt, user]'),
+    prompt: (obj, {slug}) => Prompt.query().findOne({slug}).eager('drafts'),
+    prompts: (obj, args, context, info) => Prompt.query().eager('[drafts.user]'),
+    user: (obj, {handle}) => User.query().findOne({handle}).eager('drafts'),
   }
 }
 

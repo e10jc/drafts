@@ -1,3 +1,4 @@
+const {hash} = require('bcrypt')
 const Model = require('../objection')
 
 module.exports = class User extends Model {
@@ -18,5 +19,9 @@ module.exports = class User extends Model {
 
   static get tableName () {
     return 'users'
+  }
+
+  static createPasswordHash (password) {
+    return hash(password, 10)
   }
 }

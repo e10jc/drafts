@@ -1,5 +1,5 @@
 const {ApolloServer, AuthenticationError, gql} = require('apollo-server-express')
-const {compare, hash} = require('bcrypt')
+const {compare} = require('bcrypt')
 const {sign} = require('jsonwebtoken')
 const slugify = require('slugify')
 
@@ -45,7 +45,11 @@ const typeDefs = gql`
   }
 `
 
-const createToken = user => sign({id: user.id, email: user.email}, process.env.JWT_SECRET)
+const createToken = user => sign({
+  id: user.id,
+  handle: user.handle, 
+}, process.env.JWT_SECRET)
+
 const setCookie = (token, {res}) => token ? res.cookie('token', token) : res.clearCookie('token')
 
 const resolvers = {
@@ -70,8 +74,7 @@ const resolvers = {
     },
 
     createUser: async (obj, {email, password}, {res}) => {
-      const hashedPassword = await hash(password, 10)
-      const user = await User.query().insert({email, password: hashedPassword})
+      const user = await User.query().insert({email, password: User.createPasswordHash(password)})
       const token = createToken(user)
       setCookie(token, {res})
       return token
